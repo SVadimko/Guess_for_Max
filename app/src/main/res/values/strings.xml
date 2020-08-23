@@ -7,6 +7,12 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="newgame_menu">Новая игра</string>
+    <string name="settings_menu">Настройки</string>
+    <string name="stat_menu">Статистика</string>
+    <string name="about_menu">О программе</string>
+    <string name="exit_menu">Выход</string>
 </resources>
