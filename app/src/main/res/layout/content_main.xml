@@ -59,4 +59,10 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph" android:id="@+id/nav_host_fragment"
             tools:layout_editor_absoluteX="4dp" android:layout_marginBottom="8dp"/>
+    <SeekBar
+            android:layout_width="236dp"
+            android:layout_height="40dp" android:id="@+id/sb"
+            app:layout_constraintEnd_toEndOf="@+id/info" app:layout_constraintStart_toStartOf="@+id/info"
+            app:layout_constraintTop_toBottomOf="@+id/info" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.496" app:layout_constraintVertical_bias="0.075"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
