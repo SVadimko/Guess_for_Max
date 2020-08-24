@@ -38,7 +38,32 @@ public class MainActivity extends AppCompatActivity {
     private String[] motiv_quotes = {"Давай же!", "У тебя получится!", "Ты в правильном направлении!",
             "Уже почти!", "Ответ близок!", "Постарайся!", "Еще чуть-чуть!", "Почти угадал!"};
     private SeekBar sb;
+    private boolean first_start=false;
 
+    public void pre_game(){
+        if(!first_start){
+            AlertDialog greetDialog = new AlertDialog.Builder(MainActivity.this).create();
+            greetDialog.setTitle("Приветствие");
+            greetDialog.setMessage("Автор выражает благодарность\nза запуск его программы!\nНажимая 'OK' вы подверждаете платеж $2.99\nСпасибо!");
+            greetDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            greetDialog.show();
+        }
+        first_start=true;
+        color = Color.BLACK;
+        tasking.setText("Загадано число в диапазоне 0-" + range);
+        info_msg = "Для начала игры нажмите 'Старт'";
+        info.setText(info_msg);
+        info.setTextColor(color);
+        gues_fld.setEnabled(false);
+        sb.setEnabled(false);
+        gues_btn.setText("Старт");
+        start=false;
+    }
 
     public void new_game() {
         theNumber = (int) (Math.random() * range);
@@ -46,11 +71,14 @@ public class MainActivity extends AppCompatActivity {
         previos = 0;
         count = 1;
         color = Color.BLACK;
-        info_msg = "Введите число и нажмите кнопку!";
+        info_msg = "Введите число и нажмите 'Угадать'!";
         info.setText(info_msg);
         info.setTextColor(color);
         gues_fld.requestFocus();
         gues_fld.setText("");
+        gues_fld.setEnabled(true);
+        sb.setEnabled(true);
+        sb.setProgress(0);
         //won = false;
         //gues_btn.setText("Мне повезет!");
         tasking.setText("Загадано число в диапазоне 0-" + range);
@@ -62,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();*/
         maxTries = (int) (Math.log(range) / Math.log(2) + 1);
         sb.setMax(range);
-        gues_btn.setText("Старт");
+        gues_btn.setText("Угадать");
         //sb.setProgress(range);
 
     }
@@ -76,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             int gues = Integer.parseInt(gues_fld.getText().toString());
             if ((gues >= 0 & gues <= range) & previos != gues) {
+                sb.setProgress(gues);
                 if (theNumber == gues) {
                     info_msg = "Вы угадали! Попыток: " + count;
                     info.setText(info_msg);
@@ -95,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
                     newgameDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ДА",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    start=false;
-                                    new_game();
+                                    //start=false;
+                                    pre_game();
                                     dialog.dismiss();
                                 }
                             });
@@ -132,10 +161,8 @@ public class MainActivity extends AppCompatActivity {
                     newgameDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ДА",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    start=false;
-                                    new_game();
-
-
+                                    //start=false;
+                                    pre_game();
                                     dialog.dismiss();
                                 }
                             });
@@ -184,13 +211,14 @@ public class MainActivity extends AppCompatActivity {
         final SharedPreferences preferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
         range = preferences.getInt("range", 100);
-        new_game();
+        pre_game();
         gues_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!start) {
                 start=true;
-                    gues_btn.setText("Мне повезет!");
+                new_game();
+                    //gues_btn.setText("Мне повезет!");
                     SharedPreferences preferences =
                             PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                     int gamesALL = preferences.getInt("gamesALL", 0) + 1;
@@ -295,36 +323,42 @@ catch (android.content.ActivityNotFoundException ex) {
             // }
             switch (item.getItemId()) {
                 case R.id.action_settings:
-                    final CharSequence[] items = {"от 0 до 10", "от 0 до 100", "от 0 до 1000"};
+                    final CharSequence[] items = {"от 0 до 10", "от 0 до 100", "от 0 до 1000", "от 0 до 10000"};
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Выберете сложность:");
+                    builder.setTitle("Выберете сложность\nВнимание! Это начнет новую игру");
                     builder.setItems(items, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int item) {
                             switch (item) {
                                 case 0:
                                     range = 10;
                                     storeRange(10);
-                                    new_game();
+                                    pre_game();
                                     break;
                                 case 1:
                                     range = 100;
                                     storeRange(100);
-                                    new_game();
+                                    pre_game();
                                     break;
                                 case 2:
                                     range = 1000;
                                     storeRange(1000);
-                                    new_game();
+                                    pre_game();
+                                    break;
+                                case 3:
+                                    range = 10000;
+                                    storeRange(10000);
+                                    pre_game();
                                     break;
                             }
                             dialog.dismiss();
                         }
                     });
+                    //builder.setMessage("Внимание! Это начнет новую игру");
                     AlertDialog alert = builder.create();
                     alert.show();
                     return true;
                 case R.id.action_newgame: {
-                    new_game();
+                    pre_game();
                     return true;
                 }
                 case R.id.action_gamestats:
@@ -366,7 +400,7 @@ catch (android.content.ActivityNotFoundException ex) {
                 case R.id.action_about:
                     AlertDialog aboutDialog = new AlertDialog.Builder(MainActivity.this).create();
                     aboutDialog.setTitle("О программе");
-                    aboutDialog.setMessage("(c)2020 Вадимко development");
+                    aboutDialog.setMessage("(c)2020 Вадимко development\nПо вопросам и предложениям обращайтесь по адресу \n144110@gmail.com");
                     aboutDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
